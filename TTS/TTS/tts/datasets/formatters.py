@@ -629,27 +629,146 @@ def kokoro(root_path, meta_file, **kwargs):  # pylint: disable=unused-argument
 
 
 def kss(root_path, meta_file, **kwargs):  # pylint: disable=unused-argument
-    """Korean single-speaker dataset from https://www.kaggle.com/datasets/bryanpark/korean-single-speaker-speech-dataset"""
-    txt_file = os.path.join(root_path, meta_file)
+    import os
     items = []
-    speaker_name = "kss"
-    with open(txt_file, "r", encoding="utf-8") as ttf:
-        for line in ttf:
-            cols = line.split("|")
-            wav_file = os.path.join(root_path, cols[0])
-            text = cols[2]  # cols[1] => 6월, cols[2] => 유월
-            items.append({"text": text, "audio_file": wav_file, "speaker_name": speaker_name, "root_path": root_path})
+    txt_file = os.path.join(root_path, meta_file)
+    with open(txt_file, "r", encoding="utf-8") as f:
+        for line in f:
+            cols = line.strip().split("|")
+            if len(cols) < 3:
+                continue
+
+            wav_rel_path = cols[0].strip()
+            text = cols[1].strip()
+            speaker = cols[2].strip()
+
+          
+            # 절대 경로 만들기
+            wav_abs_path = os.path.join(root_path, wav_rel_path)
+
+            # .wav 확장자 문제 처리
+            if wav_abs_path.endswith(".wav.wav"):
+                wav_abs_path = wav_abs_path.replace(".wav.wav", ".wav")
+            elif not wav_abs_path.endswith(".wav"):
+                wav_abs_path += ".wav"
+            audio_unique_name = f"{speaker}#{wav_rel_path}"
+            items.append({
+                "text": text,
+                "audio_file": wav_abs_path,
+                "speaker_name": speaker,
+                "root_path": root_path,
+                "dataset_name": speaker,
+                "audio_unique_name": audio_unique_name
+            })
     return items
 
 
-def bel_tts_formatter(root_path, meta_file, **kwargs):  # pylint: disable=unused-argument
-    txt_file = os.path.join(root_path, meta_file)
+def bel_tts_formatter(root_path, meta_file, **kwargs):
+    import os
     items = []
-    speaker_name = "bel_tts"
-    with open(txt_file, "r", encoding="utf-8") as ttf:
-        for line in ttf:
-            cols = line.split("|")
-            wav_file = os.path.join(root_path, cols[0])
-            text = cols[1]
-            items.append({"text": text, "audio_file": wav_file, "speaker_name": speaker_name, "root_path": root_path})
+    txt_file = os.path.join(root_path, meta_file)
+    with open(txt_file, "r", encoding="utf-8") as f:
+        for line in f:
+            cols = line.strip().split("|")
+            if len(cols) < 3:
+                continue
+
+            wav_rel_path = cols[0].strip()
+            text = cols[1].strip()
+            speaker = cols[2].strip()
+
+          
+            # 절대 경로 만들기
+            wav_abs_path = os.path.join(root_path, wav_rel_path)
+
+            # .wav 확장자 문제 처리
+            if wav_abs_path.endswith(".wav.wav"):
+                wav_abs_path = wav_abs_path.replace(".wav.wav", ".wav")
+            elif not wav_abs_path.endswith(".wav"):
+                wav_abs_path += ".wav"
+
+            items.append({
+                "text": text,
+                "audio_file": wav_abs_path,
+                "speaker_name": speaker,
+                "root_path": root_path
+            })
+    return items
+
+
+
+def custom_formatter(root_path, meta_file, **kwargs):
+    """
+    일반적인 TTS용 포매터.
+    metadata.csv 파일의 형식은: <상대경로 or 파일명>.wav | 텍스트 | 화자명
+    ex) conan/18.wav | 안녕하세요 | conan
+    """
+    import os
+    items = []
+    txt_file = os.path.join(root_path, meta_file)
+    with open(txt_file, "r", encoding="utf-8") as f:
+        for line in f:
+            cols = line.strip().split("|")
+            if len(cols) < 3:
+                continue
+
+            wav_rel_path = cols[0].strip()
+            text = cols[1].strip()
+            speaker = cols[2].strip()
+
+            # 중복 speaker 폴더 제거 (수정된 부분)
+            if wav_rel_path.startswith(speaker + "/"):
+                wav_rel_path = wav_rel_path.replace(speaker + "/", "")
+
+            # 절대 경로 만들기
+            wav_abs_path = os.path.join(root_path, wav_rel_path)
+
+            # .wav 확장자 문제 처리
+            if wav_abs_path.endswith(".wav.wav"):
+                wav_abs_path = wav_abs_path.replace(".wav.wav", ".wav")
+            elif not wav_abs_path.endswith(".wav"):
+                wav_abs_path += ".wav"
+
+            items.append({
+                "text": text,
+                "audio_file": wav_abs_path,
+                "speaker_name": speaker,
+                "root_path": root_path
+            })
+    return items
+
+def custom_formatter_multi(root_path, meta_file, **kwargs):
+    """
+    일반적인 TTS용 포매터.
+    metadata.csv 파일의 형식은: <상대경로 or 파일명>.wav | 텍스트 | 화자명
+    ex) conan/18.wav | 안녕하세요 | conan
+    """
+    import os
+    items = []
+    txt_file = os.path.join(root_path, meta_file)
+    with open(txt_file, "r", encoding="utf-8") as f:
+        for line in f:
+            cols = line.strip().split("|")
+            if len(cols) < 3:
+                continue
+
+            wav_rel_path = cols[0].strip()
+            text = cols[1].strip()
+            speaker = cols[2].strip()
+
+            # 절대 경로 만들기
+            wav_abs_path = os.path.join(root_path, wav_rel_path)
+
+            # .wav 확장자 문제 처리
+            if wav_abs_path.endswith(".wav.wav"):
+                wav_abs_path = wav_abs_path.replace(".wav.wav", ".wav")
+            elif not wav_abs_path.endswith(".wav"):
+                wav_abs_path += ".wav"
+
+            items.append({
+                "text": text,
+                "audio_file": wav_abs_path,
+                "speaker_name": speaker,
+                "root_path": root_path
+            })
     return items
