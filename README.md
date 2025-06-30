@@ -42,11 +42,11 @@
 
 | 캐릭터 | 모델 링크 |
 |--------|-----------|
-| 짱구   | [yourtts-jjanggu](https://huggingface.co/gahyunlee/YourTTS_characters/tree/main/conan) |
-| 케로로 | [yourtts-keroro](ttps://huggingface.co/gahyunlee/YourTTS_characters/tree/main/keroro) |
-| 코난   | [yourtts-conan](ttps://huggingface.co/gahyunlee/YourTTS_characters/tree/main/conan) |
+| 짱구   | [yourtts-jjanggu](https://huggingface.co/gahyunlee/YourTTS_characters/tree/main/jjanggu) |
+| 케로로 | [yourtts-keroro](https://huggingface.co/gahyunlee/YourTTS_characters/tree/main/keroro) |
+| 코난   | [yourtts-conan](https://huggingface.co/gahyunlee/YourTTS_characters/tree/main/conan) |
 
-( 사전학습한 모델   | [yourtts-pretrained](https://huggingface.co/Conan-Capstone-design/yourtts-conan) )
+( 사전학습한 모델   | [yourtts-pretrained](http://huggingface.co/gahyunlee/YourTTS_characters/tree/main/pretrained) )
 
 <br/>
 
